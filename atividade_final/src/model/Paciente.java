@@ -1,4 +1,4 @@
-package atividade_final;
+package model;
 
 public class Paciente {
 
@@ -20,16 +20,6 @@ public class Paciente {
         this.telefone = telefone;
         this.email = email;
         this.obs = obs;
-    }
-
-    public Paciente(String nome, String genero, String data, String endereco, int numero, String telefone, String email) {
-        this.nome = nome;
-        this.genero = genero;
-        this.data = data;
-        this.endereco = endereco;
-        this.numero = numero;
-        this.telefone = telefone;
-        this.email = email;
     }
 
     public String getNome() {

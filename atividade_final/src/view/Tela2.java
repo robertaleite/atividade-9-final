@@ -2,7 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package atividade_final;
+package view;
+
+import dao.CadastroDAO;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+import model.Paciente;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -10,11 +18,10 @@ package atividade_final;
  */
 public class Tela2 extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Tela2
-     */
-    public Tela2() {
+    private CadastroDAO cadastroDao = new CadastroDAO();
+    public Tela2() throws SQLException{
         initComponents();
+        atualizarTable(cadastroDao);
     }
 
     /**
@@ -30,21 +37,29 @@ public class Tela2 extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Nome", "Data", "Endereço", "Número", "Gênero", "Email", "Telefone", "Observações"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -52,16 +67,16 @@ public class Tela2 extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(120, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(110, 110, 110))
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(57, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -82,8 +97,32 @@ public class Tela2 extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+    private void atualizarTable(CadastroDAO cadastroDao) throws SQLException {
+        List<Paciente> cadastrados = cadastroDao.obterTodosCadastros();
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 
+        model.setRowCount(0);
+
+        for (Paciente row : cadastrados) {
+            Object[] rowData = {
+                row.getNome(),
+                row.getGenero(),
+                row.getData(),
+                row.getEndereco(),
+                row.getNumero(),
+                row.getTelefone(),
+                row.getEmail(),
+                row.getObs()
+            };
+            model.addRow(rowData);
+        }
+        // Notifica a tabela sobre as mudanças no modelo
+        model.fireTableDataChanged();
+        // Redesenha a tabela
+        jTable1.repaint();
+    }
     /**
      * @param args the command line arguments
      */
@@ -114,7 +153,11 @@ public class Tela2 extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Tela2().setVisible(true);
+                try {
+                    new Tela2().setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Tela2.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
